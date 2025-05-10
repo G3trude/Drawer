@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Drawing App</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 1em;
+    }
+    canvas {
+      border: 1px solid #333;
+      background-color: #fff;
+      cursor: crosshair;
+    }
+    .controls {
+      margin-bottom: 1em;
+      display: flex;
+      gap: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Drawing App</h1>
+  <div class="controls">
+    <label>Color: <input type="color" id="colorPicker" value="#000000"></label>
+    <label>Pen Width: <input type="range" id="penWidth" min="1" max="20" value="5"></label>
+    <button id="eraser">Eraser</button>
+    <button id="clear">Clear</button>
+  </div>
+  <canvas id="drawingCanvas" width="800" height="500"></canvas>
+
+  <script>
+    const canvas = document.getElementById('drawingCanvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const penWidth = document.getElementById('penWidth');
+    const eraser = document.getElementById('eraser');
+    const clear = document.getElementById('clear');
+
+    let drawing = false;
+    let currentColor = colorPicker.value;
+    let currentWidth = penWidth.value;
+
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseleave', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    colorPicker.addEventListener('input', () => {
+      currentColor = colorPicker.value;
+    });
+
+    penWidth.addEventListener('input', () => {
+      currentWidth = penWidth.value;
+    });
+
+    eraser.addEventListener('click', () => {
+      currentColor = '#ffffff';
+    });
+
+    clear.addEventListener('click', () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+    function draw(e) {
+      if (!drawing) return;
+      ctx.lineWidth = currentWidth;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = currentColor;
+
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    }
+
+    canvas.addEventListener('mouseup', () => ctx.beginPath());
+  </script>
+</body>
+</html>
